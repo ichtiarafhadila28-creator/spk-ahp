@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Hasil Perhitungan Fuzzy AHP{% endblock %}
+
+{% block content %}
+
+<!-- Struktur Hirarki -->
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #1a5276, #2e86c1);">
+        <h5 class="text-white mb-0"><i class="fas fa-sitemap me-2"></i>Struktur Hirarki Masalah</h5>
+    </div>
+    <div class="card-body p-4 text-center">
+        <div class="d-flex justify-content-center align-items-center flex-column">
+            <div class="p-3 rounded text-white fw-bold mb-3" style="background:#1a5276; min-width:300px;">
+                🎯 TUJUAN: Penentuan Komoditas Pertanian Unggulan Bener Meriah
+            </div>
+            <div class="mb-3">↓</div>
+            <div class="d-flex gap-2 flex-wrap justify-content-center mb-3">
+                {% for k in kriteria_list %}
+                <div class="p-2 rounded text-white text-center" style="background:#2e86c1; min-width:120px; font-size:13px;">
+                    {{ k.nama }}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">↓</div>
+            <div class="d-flex gap-2 flex-wrap justify-content-center">
+                {% for k in komoditas_list %}
+                <div class="p-2 rounded text-white text-center" style="background:#27ae60; min-width:120px; font-size:13px;">
+                    {{ k.nama }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Matriks Perbandingan TFN -->
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #1a5276, #2e86c1);">
+        <h5 class="text-white mb-0"><i class="fas fa-table me-2"></i>Matriks Perbandingan Berpasangan dengan TFN</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle" style="font-size:12px;">
+                <thead>
+                    <tr style="background:#1a5276; color:white;">
+                        <th>Kriteria</th>
+                        {% for k in kriteria_list %}
+                        <th>{{ k.nama }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i, ki in enumerate(kriteria_list) %}
+                    <tr>
+                        <td class="fw-bold" style="background:#d6eaf8;">{{ ki.nama }}</td>
+                        {% for j in range(kriteria_list|length) %}
+                        <td>
+                            ({{ hasil['matriks_tfn'][i][j][0] }},
+                             {{ hasil['matriks_tfn'][i][j][1] }},
+                             {{ hasil['matriks_tfn'][i][j][2] }})
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Nilai Si -->
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #1a5276, #2e86c1);">
+        <h5 class="text-white mb-0"><i class="fas fa-calculator me-2"></i>Nilai Fuzzy Synthetic Extent (Si)</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle">
+                <thead>
+                    <tr style="background:#1a5276; color:white;">
+                        <th>No</th>
+                        <th>Kriteria</th>
+                        <th>Si (l, m, u)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i, k in enumerate(kriteria_list) %}
+                    <tr>
+                        <td>{{ i+1 }}</td>
+                        <td class="fw-bold">{{ k.nama }}</td>
+                        <td>({{ hasil['Si'][i][0] }}, {{ hasil['Si'][i][1] }}, {{ hasil['Si'][i][2] }})</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bobot Vektor -->
+<div class="card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #1a5276, #2e86c1);">
+        <h5 class="text-white mb-0"><i class="fas fa-weight me-2"></i>Bobot Vektor & Normalisasi</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle">
+                <thead>
+                    <tr style="background:#1a5276; color:white;">
+                        <th>No</th>
+                        <th>Kriteria</th>
+                        <th>Bobot Vektor (d')</th>
+                        <th>Bobot Normal (W)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i, k in enumerate(kriteria_list) %}
+                    <tr>
+                        <td>{{ i+1 }}</td>
+                        <td class="fw-bold">{{ k.nama }}</td>
+                        <td>{{ hasil['bobot_vektor'][i] }}</td>
+                        <td><strong class="text-primary">{{ hasil['bobot_normal'][i] }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Hasil Perankingan -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #1a5276, #2e86c1);">
+        <h5 class="text-white mb-0"><i class="fas fa-trophy me-2"></i>Hasil Perankingan Komoditas</h5>
+        <a href="{{ url_for('cetak_pdf') }}" class="btn btn-danger btn-sm">
+            <i class="fas fa-file-pdf me-2"></i>Cetak PDF
+        </a>
+    </div>
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr style="background:#1a5276; color:white;">
+                        <th>Ranking</th>
+                        <th>Nama Komoditas</th>
+                        <th>Produktivitas</th>
+                        <th>Luas Tanam</th>
+                        <th>Nilai Ekonomi</th>
+                        <th>Permintaan Pasar</th>
+                        <th>Kesesuaian Lahan</th>
+                        <th>Skor Akhir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in skor_komoditas %}
+                    <tr {% if h.ranking == 1 %}class="table-success"{% endif %}>
+                        <td>
+                            {% if h.ranking == 1 %}
+                                <span class="badge bg-success fs-6">🥇 1</span>
+                            {% elif h.ranking == 2 %}
+                                <span class="badge bg-primary fs-6">🥈 2</span>
+                            {% elif h.ranking == 3 %}
+                                <span class="badge bg-warning fs-6">🥉 3</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ h.ranking }}</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ h.komoditas.nama }}</strong></td>
+                        <td>{{ h.komoditas.produktivitas }}</td>
+                        <td>{{ h.komoditas.luas_tanam }}</td>
+                        <td>{{ h.komoditas.nilai_ekonomi }}</td>
+                        <td>{{ h.komoditas.permintaan_pasar }}</td>
+                        <td>{{ h.komoditas.kesesuaian_lahan }}</td>
+                        <td><strong class="text-primary">{{ h.skor }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if skor_komoditas %}
+        <div class="alert alert-success mt-3">
+            <i class="fas fa-trophy me-2"></i>
+            <strong>Komoditas Unggulan: {{ skor_komoditas[0].komoditas.nama }}</strong>
+            dengan skor tertinggi <strong>{{ skor_komoditas[0].skor }}</strong>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="d-flex gap-2">
+    <a href="{{ url_for('kuesioner') }}" class="btn btn-primary">
+        <i class="fas fa-edit me-2"></i>Ubah Kuesioner
+    </a>
+</div>
+
+{% endblock %}

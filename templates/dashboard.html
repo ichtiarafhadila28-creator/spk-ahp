@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stat Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #0d3b6e, #1a6fa8);">
+            <h6>Total Komoditas</h6>
+            <h2>{{ total_komoditas }}</h2>
+            <i class="fas fa-seedling icon"></i>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #1a7a4a, #27ae60);">
+            <h6>Total Kriteria</h6>
+            <h2>{{ total_kriteria }}</h2>
+            <i class="fas fa-list-check icon"></i>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card" style="background: linear-gradient(135deg, #7d6608, #d4ac0d);">
+            <h6>Total User</h6>
+            <h2>{{ total_user }}</h2>
+            <i class="fas fa-users icon"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header" style="background: linear-gradient(135deg, #0d3b6e, #1a6fa8);">
+                <h5 class="text-white"><i class="fas fa-bolt me-2"></i>Aksi Cepat</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('tambah_komoditas') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Tambah Komoditas Baru
+                    </a>
+                    <a href="{{ url_for('kuesioner') }}" class="btn btn-success">
+                        <i class="fas fa-clipboard-list me-2"></i>Isi Kuesioner Perbandingan
+                    </a>
+                    <a href="{{ url_for('perhitungan_fuzzy') }}" class="btn btn-warning">
+                        <i class="fas fa-calculator me-2"></i>Lihat Hasil Perhitungan
+                    </a>
+                    <a href="{{ url_for('cetak_pdf') }}" class="btn btn-danger">
+                        <i class="fas fa-file-pdf me-2"></i>Cetak Laporan PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header" style="background: linear-gradient(135deg, #1a7a4a, #27ae60);">
+                <h5 class="text-white"><i class="fas fa-info-circle me-2"></i>Tentang Sistem</h5>
+            </div>
+            <div class="card-body p-4">
+                <h6 class="fw-bold" style="color:#0d3b6e;">Sistem Pendukung Keputusan</h6>
+                <p class="text-muted" style="font-size:13px;">Penentuan Komoditas Pertanian Unggulan di Kabupaten Bener Meriah menggunakan metode <strong>Fuzzy AHP Chang (1996)</strong></p>
+                <hr>
+                <p class="fw-semibold mb-2" style="font-size:13px; color:#0d3b6e;">5 Kriteria Penilaian:</p>
+                <div class="row g-2">
+                    {% set kriteria_icons = ['chart-line', 'expand-arrows-alt', 'dollar-sign', 'shopping-cart', 'map-marked-alt'] %}
+                    {% set kriteria_names = ['Produktivitas', 'Luas Tanam', 'Nilai Ekonomi', 'Permintaan Pasar', 'Kesesuaian Lahan'] %}
+                    {% for i in range(5) %}
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2 p-2 rounded" style="background:#f0f7ff;">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span style="font-size:12px; font-weight:500;">{{ kriteria_names[i] }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alur Sistem -->
+<div class="card">
+    <div class="card-header" style="background: linear-gradient(135deg, #0d3b6e, #1a6fa8);">
+        <h5 class="text-white"><i class="fas fa-project-diagram me-2"></i>Alur Penggunaan Sistem</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            {% set steps = [('1', 'Input Komoditas', 'seedling', '#0d3b6e'), ('2', 'Setting Kriteria', 'list-check', '#1a6fa8'), ('3', 'Isi Kuesioner', 'clipboard-list', '#1a7a4a'), ('4', 'Hitung Fuzzy AHP', 'calculator', '#27ae60'), ('5', 'Lihat Hasil', 'trophy', '#d4ac0d')] %}
+            {% for step in steps %}
+            <div class="text-center" style="min-width:120px;">
+                <div style="width:50px; height:50px; border-radius:50%; background:{{ step[3] }}; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; color:white; font-size:20px;">
+                    <i class="fas fa-{{ step[2] }}"></i>
+                </div>
+                <div style="background:{{ step[3] }}; color:white; border-radius:8px; padding:4px 8px; font-size:11px; font-weight:600;">
+                    Step {{ step[0] }}
+                </div>
+                <p style="font-size:11px; margin-top:4px; color:#555;">{{ step[1] }}</p>
+            </div>
+            {% if not loop.last %}
+            <i class="fas fa-chevron-right text-muted" style="font-size:18px; margin-bottom:20px;"></i>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

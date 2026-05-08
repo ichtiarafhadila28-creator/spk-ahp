@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Input Kuesioner Perbandingan Berpasangan{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header" style="background: linear-gradient(135deg, #1a5276, #2e86c1);">
+        <h5 class="text-white mb-0"><i class="fas fa-table me-2"></i>Input Kuesioner Perbandingan Berpasangan</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Isi matriks perbandingan berpasangan antar kriteria menggunakan skala 1-9. 
+            Nilai <b>lebih dari 1</b> berarti baris lebih penting dari kolom. 
+            Nilai <b>1</b> berarti sama penting.
+        </div>
+
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr style="background:#1a5276; color:white;">
+                        <th>Kriteria</th>
+                        {% for k in kriteria_list %}
+                        <th>{{ k.nama }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="{{ kriteria_list|length + 1 }}" class="text-muted small p-1">
+                            Skala: 1=Sama, 2=Intermediate, 3=Cukup Penting, 4=Intermediate, 5=Kuat, 6=Intermediate, 7=Sangat Kuat, 8=Intermediate, 9=Mutlak
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <form method="POST">
+            <div class="table-responsive">
+                <table class="table table-bordered text-center align-middle">
+                    <thead>
+                        <tr style="background:#1a5276; color:white;">
+                            <th>Kriteria</th>
+                            {% for k in kriteria_list %}
+                            <th>{{ k.nama }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i, ki in enumerate(kriteria_list) %}
+                        <tr>
+                            <td class="fw-bold" style="background:#d6eaf8;">{{ ki.nama }}</td>
+                            {% for j, kj in enumerate(kriteria_list) %}
+                            <td>
+                                {% if i == j %}
+                                    <input type="hidden" name="nilai_{{ ki.id }}_{{ kj.id }}" value="1">
+                                    <span class="badge bg-secondary">1</span>
+                                {% elif i < j %}
+                                    <input type="number" 
+                                           name="nilai_{{ ki.id }}_{{ kj.id }}" 
+                                           class="form-control form-control-sm text-center" 
+                                           min="1" max="9" step="1"
+                                           value="{{ existing.get((ki.id, kj.id), 1) }}"
+                                           style="width:70px; margin:auto;"
+                                           required>
+                                {% else %}
+                                    <span class="text-muted small">1/{{ existing.get((kj.id, ki.id), 1)|int }}</span>
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Simpan & Hitung
+                </button>
+                <a href="{{ url_for('perhitungan_fuzzy') }}" class="btn btn-success">
+                    <i class="fas fa-calculator me-2"></i>Lihat Hasil Perhitungan
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Ubah Komoditas{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header" style="background: linear-gradient(135deg, #1a5276, #2e86c1);">
+        <h5 class="text-white mb-0"><i class="fas fa-edit me-2"></i>Ubah Komoditas Pertanian</h5>
+    </div>
+    <div class="card-body p-4">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Nama Komoditas</label>
+                <input type="text" name="nama" class="form-control" value="{{ k.nama }}" required>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Produktivitas <small class="text-muted">(ton/ha)</small></label>
+                    <input type="number" step="0.01" name="produktivitas" class="form-control" value="{{ k.produktivitas }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Luas Tanam <small class="text-muted">(ha)</small></label>
+                    <input type="number" step="0.01" name="luas_tanam" class="form-control" value="{{ k.luas_tanam }}" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Nilai Ekonomi <small class="text-muted">(juta/ha)</small></label>
+                    <input type="number" step="0.01" name="nilai_ekonomi" class="form-control" value="{{ k.nilai_ekonomi }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Permintaan Pasar <small class="text-muted">(skala 1-10)</small></label>
+                    <input type="number" step="0.01" min="1" max="10" name="permintaan_pasar" class="form-control" value="{{ k.permintaan_pasar }}" required>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Kesesuaian Lahan <small class="text-muted">(skala 1-10)</small></label>
+                <input type="number" step="0.01" min="1" max="10" name="kesesuaian_lahan" class="form-control" value="{{ k.kesesuaian_lahan }}" required>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-save me-2"></i>Update
+                </button>
+                <a href="{{ url_for('komoditas') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
